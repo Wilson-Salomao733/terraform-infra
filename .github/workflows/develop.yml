@@ -17,4 +17,5 @@ jobs:
 
     steps:
       - name: teste
-        run: echo "segredos: ${{ env.segredos }}"
+        run: |
+          echo "segredos: ${{ env.segredos }}"
