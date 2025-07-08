@@ -1,5 +1,2 @@
 # devops-automation
-# devops-automation
-# devops-automation
-# devops-automation
-# terraform-infra
+#terraform-infra
