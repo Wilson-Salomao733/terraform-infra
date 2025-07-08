@@ -42,7 +42,7 @@ jobs:
 
       - name: Debug ENVIRONMENT variable
         run: |
-          echo "ENVIRONMENT: ${{ env.ENVIRONMENT }}"
+          echo "ENVIRONMENT: ${{ secrets.ENVIRONMENT }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -65,8 +65,8 @@ jobs:
         id: terraform-destroy
         run: |
           cd infra && \
-          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
-          terraform destroy -var-file="./envs/${{ env.ENVIRONMENT }}/terraform.tfvars" -auto-approve
+          terraform workspace select ${{ secrets.ENVIRONMENT }} || terraform workspace new ${{ secrets.ENVIRONMENT }} && \
+          terraform destroy -var-file="./envs/${{ secrets.ENVIRONMENT }}/terraform.tfvars" -auto-approve
 
 
       - name: Terraform Plan
@@ -74,13 +74,13 @@ jobs:
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
-          terraform plan -var-file="./envs/${{ env.ENVIRONMENT }}/terraform.tfvars" -out="${{ env.ENVIRONMENT }}.plan"
+          terraform workspace select ${{ secrets.ENVIRONMENT }} || terraform workspace new ${{ secrets.ENVIRONMENT }} && \
+          terraform plan -var-file="./envs/${{ secrets.ENVIRONMENT }}/terraform.tfvars" -out="${{ secrets.ENVIRONMENT }}.plan"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply
         run: |
           cd infra && \
-          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
-          terraform apply "${{ env.ENVIRONMENT }}.plan"
+          terraform workspace select ${{ secrets.ENVIRONMENT }} || terraform workspace new ${{ secrets.ENVIRONMENT }} && \
+          terraform apply "${{ secrets.ENVIRONMENT }}.plan"
