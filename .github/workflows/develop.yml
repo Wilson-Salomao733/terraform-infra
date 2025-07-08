@@ -61,8 +61,8 @@ jobs:
         id: terraform-destroy
         run: |
           cd infra && \
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
+          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
+          terraform destroy -var-file="./envs/${{ env.ENVIRONMENT }}/terraform.tfvars" -auto-approve
 
 
       - name: Terraform Plan
@@ -70,13 +70,13 @@ jobs:
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform plan -var-file="./envs/${{ env.ENVIRONMENT }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
+          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
+          terraform plan -var-file="./envs/${{ env.ENVIRONMENT }}/terraform.tfvars" -out="${{ env.ENVIRONMENT }}.plan"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply
         run: |
           cd infra && \
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform apply "${{ inputs.environment }}.plan"
+          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }} && \
+          terraform apply "${{ env.ENVIRONMENT }}.plan"
