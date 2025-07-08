@@ -7,32 +7,14 @@ on:
   pull_request:
     branches:
       - main
+env:
+  segredos: ${{ secrets.segredos }}
+
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Configure AWS credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        role-to-assume: arn:aws:iam::767263037932:role/github-actions-Wilson-Salomao733-pipeline
-        aws-region: us-east-2
-        
-    - name: Terraform Init
-      run: terraform init
-
-    - name: Terraform Plan
-      run: terraform plan
-
-   #   aws-assume-role-arn: "arn:aws:iam::767263037932:role/github-actions-Wilson-Salomao733-pipeline"
-   #   aws-region: us-east-2
-   #   aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
-   #   aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
-   
+      - name: teste
+        run: echo "segredos: ${{ env.segredos }}"
