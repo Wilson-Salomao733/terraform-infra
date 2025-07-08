@@ -10,11 +10,19 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    uses: .github/workflows/terraform.yml@main
-    with:
-      environment: develop
-      aws-assume-role-arn: "arn:aws:iam::767263037932:role/github-actions-Wilson-Salomao733-pipeline"
-      aws-region: us-east-2
-      aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
-      aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hashicorp/setup-terraform@v3
+
+       - run: terraform init
+       
+       - id: plan
+         run: terraform plan -no-color
+       
+       - run: echo ${{ steps.plan.outputs.stdout }}
+       - run: echo ${{ steps.plan.outputs.stderr }}
+       - run: echo ${{ steps.plan.outputs.exitcode }}
+   #   aws-assume-role-arn: "arn:aws:iam::767263037932:role/github-actions-Wilson-Salomao733-pipeline"
+   #   aws-region: us-east-2
+   #   aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
+   #   aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
