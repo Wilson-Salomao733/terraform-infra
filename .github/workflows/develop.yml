@@ -25,7 +25,6 @@ on:
         type: string
         required: true
 
-
 jobs:
   terraform:
     runs-on: ubuntu-latest
