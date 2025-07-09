@@ -12,12 +12,6 @@ on:
       environment:
         type: string
         required: true
-      aws-assume-role-arn:
-        type: string
-        required: true
-      aws-region:
-        type: string
-        required: true
       aws-statefile-s3-bucket:
         type: string
         required: true
