@@ -40,3 +40,7 @@ jobs:
       - name: Terraform Plan
         run: |
             cd infra/envs && terraform plan
+
+      - name: Terraform Apply
+        run: |
+            cd infra/envs && terraform apply
