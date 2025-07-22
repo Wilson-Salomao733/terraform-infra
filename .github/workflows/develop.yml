@@ -39,7 +39,7 @@ jobs:
 
       - name: Debug ENVIRONMENT variable
         run: |
-          echo "ENVIRONMENT: ${{ secrets.ENVIRONMENT }}"
+          echo "ENVIRONMENT: ${{ env.ENVIRONMENT }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -75,8 +75,8 @@ jobs:
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select prod || terraform workspace new prod && \
-          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
+          terraform workspace select ${{ env.environment }}" || terraform workspace new ${{ env.environment }}" && \
+          terraform plan -var-file="./envs/${{ env.environment }}/terraform.tfvars" -out="${{ env.environment }}.plan"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
