@@ -74,7 +74,7 @@ jobs:
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
         run: |
-          cd infra && \
+          cd infra && cd envs && \
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment}} && \
           terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
 
