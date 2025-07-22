@@ -75,7 +75,7 @@ jobs:
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment}} && \
+          terraform workspace select prod || terraform workspace new prod && \
           terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
 
       - name: Terraform Apply
