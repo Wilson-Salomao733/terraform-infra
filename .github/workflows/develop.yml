@@ -39,7 +39,7 @@ jobs:
 
       - name: Debug ENVIRONMENT variable
         run: |
-          echo "ENVIRONMENT: ${{ env.ENVIRONMENT }}"
+          echo "ENVIRONMENT: ${{ env.environment }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -68,7 +68,7 @@ jobs:
 
       - name: Debug Environment Input (before Plan)
         run: |
-          echo "ENVIRONMENT: ${{ inputs.environment }}"
+          echo "ENVIRONMENT: ${{ env.environment }}"
 
       - name: Terraform Plan
         if: steps.read-destroy-config.outputs.destroy != 'true'
