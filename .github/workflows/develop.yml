@@ -41,6 +41,12 @@ jobs:
         run: |
           echo "ENVIRONMENT: ${{ secrets.ENVIRONMENT }}"
 
+          - name: Debug Inputs
+          run: |
+            echo "ENVIRONMENT: ${{ inputs.environment }}"
+            echo "S3 BUCKET: ${{ inputs.aws-statefile-s3-bucket }}"
+            echo "DYNAMODB TABLE: ${{ inputs.aws-lock-dynamodb-table }}"
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -75,7 +81,7 @@ jobs:
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select default || terraform workspace new default && \
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment}} && \
           terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
 
       - name: Terraform Apply
