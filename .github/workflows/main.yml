@@ -12,7 +12,7 @@ permissions:
 jobs:
   terraform:
     uses: ./.github/workflows/develop.yml
-    with:
-      environment: prod
-      aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
-      aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
+   # with:
+   #   environment: prod
+   #   aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
+   #   aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"

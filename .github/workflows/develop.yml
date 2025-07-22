@@ -2,16 +2,16 @@ name: Terraform Workflow
 
 on:
   workflow_call:
-    inputs:
-      environment:
-        type: string
-        required: true
-      aws-statefile-s3-bucket:
-        type: string
-        required: true
-      aws-lock-dynamodb-table:
-        type: string
-        required: true
+ #   inputs:
+ #     environment:
+ #       type: string
+ #       required: true
+ #     aws-statefile-s3-bucket:
+ #       type: string
+ #       required: true
+ #     aws-lock-dynamodb-table:
+ #       type: string
+ #       required: true
 
 permissions:
   id-token: write
@@ -25,7 +25,7 @@ jobs:
       
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
