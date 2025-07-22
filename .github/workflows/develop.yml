@@ -1,12 +1,6 @@
 name: Terraform Workflow
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_call:
     inputs:
       environment:
@@ -41,47 +35,47 @@ jobs:
         run: |
           echo "ENVIRONMENT: ${{ inputs.environment }}"
 
-    #  - name: Setup Terraform
-    #    uses: hashicorp/setup-terraform@v3
-    #    with:
-    #      terraform_version: 1.8.3
-#
-    #  - name: Terraform Init
-    #    run: |
-    #      cd infra && terraform init \
-    #        -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
-    #        -backend-config="key=${{ github.event.repository.name }}" \
-    #        -backend-config="region=${{ inputs.aws-region }}" \
-    #        -backend-config="dynamodb_table=${{ inputs.aws-lock-dynamodb-table }}"
-#
-    #  - name: Terraform Validate
-    #    run: |
-    #      cd infra && terraform validate
-#
-    #  - name: Terraform Destroy
-    #    if: steps.read-destroy-config.outputs.destroy == 'true'
-    #    id: terraform-destroy
-    #    run: |
-    #      cd infra && \s
-    #      terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
-    #      terraform destroy -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -auto-approve
-#
-    #  - name: Debug Environment Input (before Plan)
-    #    run: |
-    #      echo "ENVIRONMENT: ${{ github.event.inputs.environment }}"
-#
-    #  - name: Terraform Plan
-    #    if: steps.read-destroy-config.outputs.destroy != 'true'
-    #    id: terraform-plan
-    #    run: |
-    #      cd infra && \
-    #      terraform workspace select ${{ github.event.inputs.environment }}" || terraform workspace new ${{ github.event.inputs.environment }}" && \
-    #      terraform plan -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -out="${{ github.event.inputs.environment }}.plan"
-#
-    #  - name: Terraform Apply
-    #    if: steps.read-destroy-config.outputs.destroy != 'true'
-    #    id: terraform-apply
-    #    run: |
-    #      cd infra && \
-    #      terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
-    #      terraform apply "${{ github.event.inputs.environment }}.plan"
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.3
+
+      - name: Terraform Init
+        run: |
+          cd infra && terraform init \
+            -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
+            -backend-config="key=${{ github.event.repository.name }}" \
+            -backend-config="region=${{ inputs.aws-region }}" \
+            -backend-config="dynamodb_table=${{ inputs.aws-lock-dynamodb-table }}"
+
+      - name: Terraform Validate
+        run: |
+          cd infra && terraform validate
+
+      - name: Terraform Destroy
+        if: steps.read-destroy-config.outputs.destroy == 'true'
+        id: terraform-destroy
+        run: |
+          cd infra && \s
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
+          terraform destroy -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -auto-approve
+
+      - name: Debug Environment Input (before Plan)
+        run: |
+          echo "ENVIRONMENT: ${{ github.event.inputs.environment }}"
+
+      - name: Terraform Plan
+        if: steps.read-destroy-config.outputs.destroy != 'true'
+        id: terraform-plan
+        run: |
+          cd infra && \
+          terraform workspace select ${{ github.event.inputs.environment }}" || terraform workspace new ${{ github.event.inputs.environment }}" && \
+          terraform plan -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -out="${{ github.event.inputs.environment }}.plan"
+
+      - name: Terraform Apply
+        if: steps.read-destroy-config.outputs.destroy != 'true'
+        id: terraform-apply
+        run: |
+          cd infra && \
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
+          terraform apply "${{ github.event.inputs.environment }}.plan"
