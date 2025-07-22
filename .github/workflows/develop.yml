@@ -22,6 +22,10 @@ on:
         required: true
         default: "wilson-salomao733-us-east-2-terraform-lock"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
