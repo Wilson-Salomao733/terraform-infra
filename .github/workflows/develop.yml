@@ -63,25 +63,25 @@ jobs:
         id: terraform-destroy
         run: |
           cd infra && \s
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
+          terraform destroy -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -auto-approve
 
       - name: Debug Environment Input (before Plan)
         run: |
-          echo "ENVIRONMENT: ${{ inputs.environment }}"
+          echo "ENVIRONMENT: ${{ github.event.inputs.environment }}"
 
       - name: Terraform Plan
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
         run: |
           cd infra && \
-          terraform workspace select ${{ inputs.environment }}" || terraform workspace new ${{ inputs.environment }}" && \
-          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
+          terraform workspace select ${{ github.event.inputs.environment }}" || terraform workspace new ${{ github.event.inputs.environment }}" && \
+          terraform plan -var-file="./envs/${{ github.event.inputs.environment }}/terraform.tfvars" -out="${{ github.event.inputs.environment }}.plan"
 
       - name: Terraform Apply
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply
         run: |
           cd infra && \
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform apply "${{ inputs.environment }}.plan"
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }} && \
+          terraform apply "${{ github.event.inputs.environment }}.plan"
