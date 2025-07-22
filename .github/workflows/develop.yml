@@ -1,20 +1,87 @@
-name: "DEV DEPLOY"
+name: Terraform Workflow
 
 on:
   push:
     branches:
-      - develop
-
-permissions:
-  id-token: write
-  contents: read
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        default: prod
+      aws-statefile-s3-bucket:
+        type: string
+        required: true
+        default: "wilson-salomao733-us-east-2-terraform-statefile"
+      aws-lock-dynamodb-table:
+        type: string
+        required: true
+        default: "wilson-salomao733-us-east-2-terraform-lock"
 
 jobs:
   terraform:
-    uses: ./.github/workflows/terraform.yml
-    with:
-      environment: dev
-      aws-assume-role-arn: "arn:aws:iam::767263037932:role/github-actions-Wilson-Salomao733-pipeline"
-      aws-region: "us-east-2"
-      aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
-      aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2      
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Debug ENVIRONMENT variable
+        run: |
+          echo "ENVIRONMENT: ${{ secrets.ENVIRONMENT }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.3
+
+      - name: Terraform Init
+        run: |
+          cd infra && terraform init \
+            -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
+            -backend-config="key=${{ github.event.repository.name }}" \
+            -backend-config="region=${{ inputs.aws-region }}" \
+            -backend-config="dynamodb_table=${{ inputs.aws-lock-dynamodb-table }}"
+
+      - name: Terraform Validate
+        run: |
+          cd infra && terraform validate
+
+      - name: Terraform Destroy
+        if: steps.read-destroy-config.outputs.destroy == 'true'
+        id: terraform-destroy
+        run: |
+          cd infra && \s
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
+          terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
+
+      - name: Debug Environment Input (before Plan)
+        run: |
+          echo "ENVIRONMENT: ${{ inputs.environment }}"
+
+      - name: Terraform Plan
+        if: steps.read-destroy-config.outputs.destroy != 'true'
+        id: terraform-plan
+        run: |
+          cd infra && \
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment}} && \
+          terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
+
+      - name: Terraform Apply
+        if: steps.read-destroy-config.outputs.destroy != 'true'
+        id: terraform-apply
+        run: |
+          cd infra && \
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
+          terraform apply "${{ inputs.environment }}.plan"
