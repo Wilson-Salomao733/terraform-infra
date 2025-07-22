@@ -14,5 +14,5 @@ jobs:
     uses: ./.github/workflows/develop.yml
     with:
       environment: prod
-      aws-statefile-s3-bucket: "wilson-salomao733-us-east-2-terraform-statefile"
-      aws-lock-dynamodb-table: "wilson-salomao733-us-east-2-terraform-lock"
+      aws-statefile-s3-bucket: wilson-salomao733-us-east-2-terraform-statefile
+      aws-lock-dynamodb-table: wilson-salomao733-us-east-2-terraform-lock
