@@ -1,17 +1,26 @@
 name: Terraform Workflow
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_call:
     inputs:
       environment:
         type: string
         required: true
+        default: prod
       aws-statefile-s3-bucket:
         type: string
         required: true
+        default: "wilson-salomao733-us-east-2-terraform-statefile"
       aws-lock-dynamodb-table:
         type: string
         required: true
+        default: "wilson-salomao733-us-east-2-terraform-lock"
 
 jobs:
   terraform:
