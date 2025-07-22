@@ -31,12 +31,12 @@ jobs:
 
       - name: Terraform Init
         run: |
-            cd infra &&  terraform init
+            cd infra/envs && terraform init
  
       - name: Terraform Validate
         run: |
-            cd infra && terraform validate
+            cd infra/envs && terraform validate
  
       - name: Terraform Plan
         run: |
-            cd infra && terraform plan
+            cd infra/envs && terraform plan
