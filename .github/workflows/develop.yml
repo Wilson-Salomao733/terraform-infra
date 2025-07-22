@@ -63,6 +63,10 @@ jobs:
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
           terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
 
+      - name: Debug Environment Input (before Plan)
+        run: |
+          echo "ENVIRONMENT: ${{ inputs.environment }}"
+
       - name: Terraform Plan
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
